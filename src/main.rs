@@ -103,14 +103,43 @@ impl Database {
         Ok(())
 
     }
+
+    fn remove_image(&self, image_name: &str) -> Result<()> {
+        let count: usize = self.conn.query_row(schema::images::FIND_IMAGE_COUNT, [image_name], |row| row.get(0))?;
+
+        if count == 1 {
+            let image = self.conn.query_row(schema::images::SELECT_SPECIFIC_IMAGE, params![image_name], |row| {
+                Ok(Image {
+                    id: row.get(0)?,
+                    name: row.get(1)?,
+                    path: row.get(2)?,
+                    added_date: row.get(3)?
+                })
+            })?;
+
+            self.conn.execute(schema::images::REMOVE_IMAGE, [image.name])?;
+            let _ = fs::remove_file(image.path);
+            println!("Object removed");
+        } else if count > 1 {
+            println!("There are too many objects registered under that name");
+        } else {
+            println!("No such object exists");
+        }
+
+        Ok(())
+    }
 }
 
 const DATABASE:&str = "storage.db";
 fn main() -> Result<()> {
     let database = Database::new(DATABASE.to_string())?;
 
-    database.add_image("example.txt")?;
+    // database.add_image("example.txt")?;
     database.show_images()?;
+    // database.remove_image("example.txt")?;
 
+    // println!("\n\n");
+
+    // database.show_images()?;
     Ok(())
 }

@@ -22,9 +22,21 @@ pub mod images {
         SELECT * FROM images
     ";
 
+    pub const REMOVE_IMAGE:&str = "
+        DELETE FROM images WHERE image_name = ?1
+    ";
+
     pub const ADD_IMAGE:&str = "
         INSERT INTO images (image_name, image_path)
         VALUES (?1, ?2)
+    ";
+    
+    pub const FIND_IMAGE_COUNT:&str = "
+        SELECT COUNT(*) FROM images WHERE image_name = ?1
+    ";
+
+    pub const SELECT_SPECIFIC_IMAGE:&str = "
+        SELECT * FROM images WHERE image_name = ?1
     ";
 }
 
