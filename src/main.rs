@@ -128,6 +128,10 @@ impl Database {
 
         Ok(())
     }
+
+    // fn search_images_by_name(&self, image_name: &str) -> Result<()> {
+    //     let stmt
+    // }
 }
 
 const DATABASE:&str = "storage.db";

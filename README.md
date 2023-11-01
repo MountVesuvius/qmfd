@@ -1,5 +1,24 @@
 # qmfd
+`qmfd` is a **Q**uick **M**eme **F**inding **D**evice to help me organise and search reaction images and memes at a faster rate. i hate how discord handles gifs and doesn't really let you store images. I don't want to resort to using all these different keyboard applications as that is a right pain. therefore, i'm building this system so i don't need to spend 3 mins scrolling through 1000s of images trying to find what i want.
 
+reaction images are only funny if you're fast and accurate.
+
+## Feature Checklist
+This is just so i can check things off as i build them and give myself a sense of achomplishment. I know, very professional indeed
+
+> ---
+> **Features**
+> - [ ] Search for image based on name
+> - [ ] Search for image based on tag name
+> - [x] Add a new image
+> - [ ] Add a new image and rename the image
+> - [ ] Add a new image and assign preexisting tags
+> - [ ] Create a new tag
+> - [ ] Rename image
+> - [ ] Rename tag
+> - [x] Delete image
+> - [ ] Delete tag
+> ---
 
 
 ## Usability & Commands
@@ -30,16 +49,16 @@ Alone it will just check if a database has been initialized, and spit out some b
 
 # DB Diagram
 ```
-
-+-----------+        +-------------+        +-------+
-|  images   |        | image_tags  |        | tags  |
-+-----------+        +-------------+        +-------+
-| image_id  |<------>| image_id    |        | tag_id|
-| image_name|        | tag_id      |<------>|tag_name|
-| image_path|        +-------------+        +-------+
-| added_date|
++-----------+        +-------------+        
+|  images   |        | image_tags  |        +--------+ 
++-----------+        +-------------+        | tags   |
+| image_id  |<------>| image_id    |        +--------+ 
+| image_name|        | tag_id      |<------>| tag_id |
+| image_path|        +-------------+        |tag_name|
+| added_date|                               +--------+
 +-----------+
 ```
+note: i had a tool make this, but then had to line up all the arrows :sob:
 
 ## basic idea
 - the images table contains details about each image, including its ID, name, path, and the date it was added.

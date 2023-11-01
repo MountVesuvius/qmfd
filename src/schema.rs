@@ -38,6 +38,10 @@ pub mod images {
     pub const SELECT_SPECIFIC_IMAGE:&str = "
         SELECT * FROM images WHERE image_name = ?1
     ";
+
+    pub const NAME_BASED_SEARCH:&str = "
+        SELECT * FROM images WHERE image_name LIKE '%?1%';
+    ";
 }
 
 pub mod tags {
