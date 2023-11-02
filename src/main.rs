@@ -11,7 +11,6 @@ use std::path::Path;
 use rusqlite::{params, Connection, Result};
 use regex::Regex;
 
-
 struct Database {
     conn: Connection
 }
@@ -40,6 +39,7 @@ impl fmt::Display for Image {
     }
 }
 
+// Implementation of images
 impl Database {
     fn new(database: String) -> Result<Self> {
         let conn = Connection::open(&database)?;
@@ -85,8 +85,6 @@ impl Database {
         };
         let destination = "storage/".to_owned() + filename.as_ref().unwrap();
 
-        // I don't know what happens if the file is already called that so i am a little worried
-        // Todo: Figure out a better option than just booting the file from being copied
         if !Path::new(&destination).exists() {
             self.conn.execute(schema::images::ADD_IMAGE, params![&filename, destination])?;
             let _ = fs::copy(init_path, destination);
@@ -156,22 +154,58 @@ impl Database {
 
         Ok(images)
     }
+}
 
+// Implementation of tags
+impl Database {
+    fn show_tags(&self) -> Result<()> {
+        let mut stmt = self.conn.prepare(schema::tags::GET_ALL_TAGS)?;
+        let tag_iter = stmt.query_map([], |row| {
+            Ok(Tag {
+                id: row.get(0)?,
+                name: row.get(1)?,
+            })
+        })?;
+
+        for tag in tag_iter {
+            println!("{}\n", tag?);
+        }
+
+        Ok(())
+    }
+    
+    fn create_tag(&self, tag_name: &str) -> Result<()> {
+        self.conn.execute(schema::tags::CREATE_TAG, [tag_name])?;
+
+        Ok(())
+    }
+
+    fn remove_tag(&self, tag_name:&str) -> Result<()> {
+        self.conn.execute(schema::tags::REMOVE_TAG, [tag_name])?;
+        Ok(())
+    }
 }
 
 const DATABASE:&str = "storage.db";
 fn main() -> Result<()> {
     let database = Database::new(DATABASE.to_string())?;
 
-    // database.add_image("example_images/hecooks.png")?;
-    // database.add_image("example_images/maps.png")?;
+    // Tag Testing
+    database.create_tag("boom")?;
+    database.show_tags()?;
+    database.remove_tag("boom")?;
+    database.show_tags()?;
+
+    // Image Testing
+    database.add_image("example_images/hecooks.png")?;
+    database.add_image("example_images/maps.png")?;
 
     database.show_images()?;
 
     database.search_image_by_name("hecooks")?;
 
-    // database.remove_image("hecooks.png")?;
-    // database.remove_image("maps.png")?;
+    database.remove_image("hecooks.png")?;
+    database.remove_image("maps.png")?;
 
     Ok(())
 }

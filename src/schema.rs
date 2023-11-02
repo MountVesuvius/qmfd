@@ -51,4 +51,20 @@ pub mod tags {
             tag_name TEXT UNIQUE NOT NULL
         )
     ";
+
+    pub const GET_ALL_TAGS:&str = "
+        SELECT * FROM tags 
+    ";
+
+    pub const CREATE_TAG:&str = "
+        INSERT OR IGNORE INTO tags (tag_name) VALUES (?1)
+    ";
+
+    pub const REMOVE_TAG:&str = "
+        DELETE FROM tags WHERE tag_name = ?1
+    ";
+
+    pub const LINK_TAG_TO_IMAGE:&str = "
+        INSERT INTO image_tags (image_id, tag_id) VALUES (?1, ?2)
+    ";
 }
