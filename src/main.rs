@@ -1,16 +1,14 @@
-// There are excessive comments in this project, because this is my first proper rust project and idk what i'm doing.
-// Trying to make it a learning experience
 mod schema;
+mod copy_image;
+
+extern crate regex;
+extern crate rusqlite;
 
 use std::fmt;
 use std::fs;
 use std::path::Path;
 
-extern crate rusqlite;
 use rusqlite::{params, Connection, Result};
-use chrono::NaiveDate;
-
-extern crate regex;
 use regex::Regex;
 
 
@@ -42,10 +40,6 @@ impl fmt::Display for Image {
     }
 }
 
-// fn copy_files(source: String, location: String) -> std::io::Result<()> {
-//     fs::copy(source, location)?;
-// }
-
 impl Database {
     fn new(database: String) -> Result<Self> {
         let conn = Connection::open(&database)?;
@@ -70,7 +64,7 @@ impl Database {
         })?;
 
         for image in image_iter {
-            println!("{}", image?);
+            println!("{}\n", image?);
         }
 
         Ok(())
@@ -129,21 +123,55 @@ impl Database {
         Ok(())
     }
 
-    // fn search_images_by_name(&self, image_name: &str) -> Result<()> {
-    //     let stmt
-    // }
+    fn search_image_by_name(&self, image_name:&str) -> Result<Vec<Image>> {
+        let search_term = format!("%{}%", image_name);
+        let mut stmt = self.conn.prepare(schema::images::NAME_BASED_SEARCH)?;
+        let image_iter = stmt.query_map([search_term], |row| {
+            Ok(Image {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                path: row.get(2)?,
+                added_date: row.get(3)?
+            })
+        })?;
+
+        let images = image_iter.collect::<Result<Vec<_>>>()?;
+
+        // Not sure if this is good convention, i just have been trying to learn `match` more
+        // If this is terrible code, i will change it in future
+        match images.len() {
+            0 => println!("No images found under that name"),
+            1 => {
+                copy_image::clipboard_image_copy(&images[0].path);
+                println!("Image copied to clipboard");
+            },
+            _ => {
+                // TODO: Future implement that they can just choose a number
+                println!("Too many similar image names, please narrow down selection from this list");
+                for (index, image) in images.iter().enumerate() {
+                    println!("{}. {}", index, image.name);
+                }
+            }
+        }
+
+        Ok(images)
+    }
+
 }
 
 const DATABASE:&str = "storage.db";
 fn main() -> Result<()> {
     let database = Database::new(DATABASE.to_string())?;
 
-    // database.add_image("example.txt")?;
+    // database.add_image("example_images/hecooks.png")?;
+    // database.add_image("example_images/maps.png")?;
+
     database.show_images()?;
-    // database.remove_image("example.txt")?;
 
-    // println!("\n\n");
+    database.search_image_by_name("hecooks")?;
 
-    // database.show_images()?;
+    // database.remove_image("hecooks.png")?;
+    // database.remove_image("maps.png")?;
+
     Ok(())
 }

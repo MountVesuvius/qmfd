@@ -40,7 +40,7 @@ pub mod images {
     ";
 
     pub const NAME_BASED_SEARCH:&str = "
-        SELECT * FROM images WHERE image_name LIKE '%?1%';
+        SELECT * FROM images WHERE image_name LIKE ?1;
     ";
 }
 
