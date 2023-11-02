@@ -2,3 +2,4 @@
 storage.db
 /storage
 src/tests.rs
+/example_images

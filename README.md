@@ -8,7 +8,7 @@ This is just so i can check things off as i build them and give myself a sense o
 
 > ---
 > **Features**
-> - [ ] Search for image based on name
+> - [x] Search for image based on name
 > - [ ] Search for image based on tag name
 > - [x] Add a new image
 > - [ ] Add a new image and rename the image
@@ -18,6 +18,7 @@ This is just so i can check things off as i build them and give myself a sense o
 > - [ ] Rename tag
 > - [x] Delete image
 > - [ ] Delete tag
+> - [ ] Copy image to clipboard
 > ---
 
 
