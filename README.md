@@ -8,17 +8,17 @@ This is just so i can check things off as i build them and give myself a sense o
 
 > ---
 > **Features**
-> - [x] Search for image based on name
+> - [x] ~~Search for image based on name~~
 > - [ ] Search for image based on tag name
-> - [x] Add a new image
+> - [x] ~~Add a new image~~
 > - [ ] Add a new image and rename the image
 > - [ ] Add a new image and assign preexisting tags
-> - [ ] Create a new tag
+> - [x] ~~Create a new tag~~
 > - [ ] Rename image
 > - [ ] Rename tag
-> - [x] Delete image
-> - [ ] Delete tag
-> - [ ] Copy image to clipboard
+> - [x] ~~Delete image~~
+> - [x] ~~Delete tag~~
+> - [x] ~~Copy image to clipboard~~
 > ---
 
 
