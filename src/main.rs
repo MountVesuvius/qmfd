@@ -121,7 +121,32 @@ impl Database {
         Ok(())
     }
 
-    fn search_image_by_name(&self, image_name:&str) -> Result<Vec<Image>> {
+    fn search_image_by_name(&self, image_name: &str) -> Result<Vec<Image>> {
+        let search_term = format!("%{}%", image_name);
+        let mut stmt = self.conn.prepare(schema::images::NAME_BASED_SEARCH)?;
+        let image_iter = stmt.query_map([search_term], |row| {
+            Ok(Image {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                path: row.get(2)?,
+                added_date: row.get(3)?
+            })
+        })?;
+
+        Ok(image_iter.collect::<Result<Vec<_>>>()?)
+    }
+
+    // Doesn't reference self, so not sure if this should be here. it does pertain to images though
+    fn select_image_for_copy(images: Vec<Image>) -> Result<()> {
+        for image in images {
+            println!("{}", image);
+        };
+
+
+        Ok(())
+    }
+
+    fn _search_image_by_name(&self, image_name:&str) -> Result<Vec<Image>> {
         let search_term = format!("%{}%", image_name);
         let mut stmt = self.conn.prepare(schema::images::NAME_BASED_SEARCH)?;
         let image_iter = stmt.query_map([search_term], |row| {
@@ -186,10 +211,13 @@ impl Database {
     }
 }
 
+
+
 const DATABASE:&str = "storage.db";
 fn main() -> Result<()> {
     let database = Database::new(DATABASE.to_string())?;
 
+    /*
     // Tag Testing
     database.create_tag("boom")?;
     database.show_tags()?;
@@ -207,5 +235,11 @@ fn main() -> Result<()> {
     database.remove_image("hecooks.png")?;
     database.remove_image("maps.png")?;
 
+     */
+
+    // database.show_images()?;
+    let images = database.search_image_by_name("s")?;
+    select_image_for_copy(&images);
+    
     Ok(())
 }
